@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  Student
+  Teacher
+  Admin
+}
+
+enum NodeType {
+  Folder
+  Video
+  PDF
+  text
+  Quiz
+  Assignment
+  Link
+}
+
+model User {
+  id          String      @id       @default(cuid())
+  name        String
+  email       String      @unique
+  password    String
+  role        Role        @default(Student)
+
+  Organisation            Organisation?
+  enrollments             Enrollment[]
+  Progress    Progress[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Organisation {
+  id          String      @id       @default(cuid())
+  name        String
+  slug        String      @unique
+  description             String?
+  logo                    String?
+
+  ownerId     String      @unique
+  owner       User        @relation(fields: [ownerId], references: [id])
+
+  courses     Course[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Course {
+  id          String      @id       @default(cuid())
+
+  title       String
+  description String?
+  thumnail    String?
+
+  price       Float
+  published   Boolean     @default(false)
+
+  organisationId          String
+  organisation            Organisation    @relation(fields: [organisationId], references: [id])
+
+  nodes       ContentNode[]
+  enrollments Enrollment[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model ContentNode{
+  id          String      @id       @default(cuid())
+
+  title       String
+  type        NodeType
+  order       Int
+
+  parentId    String?
+  parent      ContentNode?          @relation("Tree", fields: [parentId], references: [id])
+  children    ContentNode[]         @relation("Tree")
+
+  courseId    String
+  course      Course      @relation(fields: [courseId], references: [id])
+
+  videoUrl    String?
+  pdfUrl      String?
+  text        String?
+  link        String?
+
+  duration    Int?
+  progress    Progress[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Enrollment{
+  id          String      @id       @default(cuid())
+
+  studentId   String
+  student     User        @relation(fields: [studentId], references: [id])
+
+  courseId    String
+  course      Course      @relation(fields: [courseId], references: [id])
+
+  enrolledAt  DateTime    @default(now())
+  @@unique([studentId, courseId])
+}
+
+model Progress{
+  id          String      @id       @default(cuid())
+
+  studentId   String
+  student     User        @relation(fields: [studentId], references: [id])
+
+  nodeId    String
+  node      ContentNode   @relation(fields: [nodeId], references: [id])
+
+  completed Boolean     @default(false)
+  @@unique([studentId, nodeId])
+}
