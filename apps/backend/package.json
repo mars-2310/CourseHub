@@ -1,5 +1,6 @@
 {
   "name": "backend",
+  "version": "1.0.0",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -10,6 +11,8 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@clerk/backend": "^3.10.0",
+    "@clerk/express": "^2.1.35",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "cors": "^2.8.6",
