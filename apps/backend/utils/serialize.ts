@@ -17,3 +17,23 @@ export const toUserDTO = (user: User) => ({
 
 export const toMoney = (value: { toFixed(dp: number): string } | null | undefined): string | null =>
   value == null ? null : value.toFixed(2);
+
+export const toOrganisationDTO = (org: {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  logo: string | null;
+  ownerId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}) => ({
+  id: org.id,
+  name: org.name,
+  slug: org.slug,
+  description: org.description,
+  logo: org.logo,
+  ownerId: org.ownerId,
+  createdAt: org.createdAt,
+  updatedAt: org.updatedAt,
+});
