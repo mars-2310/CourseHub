@@ -65,7 +65,9 @@ model Course {
   title          String
   description    String?
   thumbnail      String?
-  price          Float
+  // Money is Decimal, never Float: binary floating point cannot represent
+  // ordinary prices exactly and the error compounds across totals.
+  price          Decimal       @db.Decimal(10, 2)
   published      Boolean       @default(false)
 
   organisationId String

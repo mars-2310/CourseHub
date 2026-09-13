@@ -37,3 +37,38 @@ export const toOrganisationDTO = (org: {
   createdAt: org.createdAt,
   updatedAt: org.updatedAt,
 });
+
+interface CourseRow {
+  id: string;
+  title: string;
+  description: string | null;
+  thumbnail: string | null;
+  price: { toFixed(dp: number): string };
+  published: boolean;
+  organisationId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  organisation?: { id: string; name: string; slug: string; logo: string | null };
+}
+
+export const toCourseDTO = (course: CourseRow) => ({
+  id: course.id,
+  title: course.title,
+  description: course.description,
+  thumbnail: course.thumbnail,
+  price: toMoney(course.price),
+  published: course.published,
+  organisationId: course.organisationId,
+  ...(course.organisation
+    ? {
+        organisation: {
+          id: course.organisation.id,
+          name: course.organisation.name,
+          slug: course.organisation.slug,
+          logo: course.organisation.logo,
+        },
+      }
+    : {}),
+  createdAt: course.createdAt,
+  updatedAt: course.updatedAt,
+});
