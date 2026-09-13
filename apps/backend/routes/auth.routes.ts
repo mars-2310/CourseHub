@@ -1,27 +1,10 @@
 import { Router } from "express";
-import { requireAuth, getAuth, clerkClient } from "@clerk/express";
-import prisma from "../lib/prisma";
+import { requireUser } from "../middleware/auth";
+import { getMe } from "../controllers/auth.controller";
 
 const authRouter = Router();
 
-authRouter.get("/me", requireAuth(), async (req, res) => {
-  const { userId: clerkId } = getAuth(req);
-
-  let user = await prisma.user.findUnique({ where: { clerkId: clerkId! } });
-
-  if (!user) {
-    const clerkUser = await clerkClient.users.getUser(clerkId!);
-    user = await prisma.user.create({
-      data: {
-        clerkId: clerkId!,
-        email: clerkUser.emailAddresses[0]?.emailAddress ?? "",
-        name: clerkUser.firstName ?? "New User",
-        role: "STUDENT",
-      },
-    });
-  }
-
-  res.json({ user });
-});
+// Syncs the Clerk identity into CourseHub and returns the local user record.
+authRouter.get("/me", requireUser, getMe);
 
 export default authRouter;

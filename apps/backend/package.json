@@ -8,8 +8,14 @@
     "@types/bun": "latest"
   },
   "scripts": {
-    "dev": "bun index.ts",
-    "prisma": "prisma"
+    "dev": "bun --hot index.ts",
+    "start": "NODE_ENV=production bun index.ts",
+    "check-types": "tsc --noEmit",
+    "prisma": "prisma",
+    "db:generate": "bun --bun run prisma generate",
+    "db:migrate": "bun --bun run prisma migrate dev",
+    "postinstall": "bun --bun run prisma generate",
+    "test": "bun test"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -24,6 +30,7 @@
     "@types/express": "^5.0.6",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "prisma": "7.8.0"
+    "prisma": "7.8.0",
+    "zod": "^4.6.4"
   }
 }
