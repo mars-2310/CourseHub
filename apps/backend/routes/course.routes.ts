@@ -1,5 +1,5 @@
-import { Router } from 'express';
+import { Router } from "express";
 
 const courseRouter = Router();
 
-export default courseRouter
+export default courseRouter;

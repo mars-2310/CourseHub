@@ -1,5 +1,5 @@
-import { Router } from 'express';
+import { Router } from "express";
 
 const uploadRouter = Router();
 
-export default uploadRouter
+export default uploadRouter;

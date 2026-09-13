@@ -1,9 +1,5 @@
 import { Router } from "express";
 
-const router = Router();
+const nodeRouter = Router();
 
-router.get("/:id/tree", (req, res) => {
-  res.json({ message: "ContentNode tree router placeholder active!" });
-});
-
-export default router;
+export default nodeRouter;
