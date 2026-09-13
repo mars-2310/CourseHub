@@ -3,6 +3,7 @@ import { requireUser } from "../middleware/auth";
 import { getMe } from "../controllers/auth.controller";
 import * as organisations from "../controllers/organisation.controller";
 import * as courses from "../controllers/course.controller";
+import * as enrollments from "../controllers/enrollment.controller";
 
 const meRouter = Router();
 
@@ -12,8 +13,10 @@ meRouter.use(requireUser);
 meRouter.get("/", getMe);
 meRouter.get("/organization", organisations.getMine);
 
-// Courses the caller teaches, drafts included. /me/courses is reserved for the
-// student side (courses they are enrolled in).
+// Courses the caller is enrolled in as a student.
+meRouter.get("/courses", enrollments.listMine);
+
+// Courses the caller teaches, drafts included.
 meRouter.get("/teaching", courses.listMine);
 
 export default meRouter;
