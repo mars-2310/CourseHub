@@ -2,7 +2,10 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  // Prisma 7's TypeScript generator. The legacy "prisma-client-js" provider
+  // emits a JS bundle; "prisma-client" emits real TS sources, which is what this
+  // Bun + TypeScript backend imports from ./generated/prisma/client.
+  provider = "prisma-client"
   output   = "../lib/generated/prisma"
 }
 

@@ -8,8 +8,13 @@
     "@types/bun": "latest"
   },
   "scripts": {
-    "dev": "bun index.ts",
-    "prisma": "prisma"
+    "dev": "bun --hot index.ts",
+    "start": "NODE_ENV=production bun index.ts",
+    "check-types": "tsc --noEmit",
+    "prisma": "prisma",
+    "db:generate": "bun --bun run prisma generate",
+    "db:migrate": "bun --bun run prisma migrate dev",
+    "postinstall": "bun --bun run prisma generate"
   },
   "peerDependencies": {
     "typescript": "^5"
