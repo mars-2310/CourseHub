@@ -14,7 +14,8 @@
     "prisma": "prisma",
     "db:generate": "bun --bun run prisma generate",
     "db:migrate": "bun --bun run prisma migrate dev",
-    "postinstall": "bun --bun run prisma generate"
+    "postinstall": "bun --bun run prisma generate",
+    "test": "bun test"
   },
   "peerDependencies": {
     "typescript": "^5"

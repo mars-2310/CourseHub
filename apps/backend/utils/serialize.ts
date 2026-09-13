@@ -72,3 +72,72 @@ export const toCourseDTO = (course: CourseRow) => ({
   createdAt: course.createdAt,
   updatedAt: course.updatedAt,
 });
+
+interface NodeRow {
+  id: string;
+  title: string;
+  type: string;
+  order: number;
+  parentId: string | null;
+  courseId: string;
+  videoUrl: string | null;
+  pdfUrl: string | null;
+  text: string | null;
+  link: string | null;
+  duration: number | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * `preview` callers (not enrolled, not the owner) get the curriculum outline
+ * without any content payload. The tree shape stays visible so a course page can
+ * advertise what it teaches; the material itself does not leave the server.
+ */
+export const toNodeDTO = (node: NodeRow, access: "manage" | "enrolled" | "preview") => {
+  const base = {
+    id: node.id,
+    title: node.title,
+    type: node.type,
+    order: node.order,
+    parentId: node.parentId,
+    courseId: node.courseId,
+    duration: node.duration,
+  };
+  if (access === "preview") return { ...base, locked: true };
+  return {
+    ...base,
+    locked: false,
+    videoUrl: node.videoUrl,
+    pdfUrl: node.pdfUrl,
+    text: node.text,
+    link: node.link,
+    createdAt: node.createdAt,
+    updatedAt: node.updatedAt,
+  };
+};
+
+/** Nests serialized nodes, preserving sibling order. */
+export const toTreeDTO = (
+  nodes: NodeRow[],
+  access: "manage" | "enrolled" | "preview",
+): unknown[] => {
+  const wrapped = new Map(
+    nodes.map(n => [n.id, { ...toNodeDTO(n, access), children: [] as unknown[] }]),
+  );
+  const roots: { order: number; children: unknown[] }[] = [];
+
+  for (const node of nodes) {
+    const entry = wrapped.get(node.id)!;
+    const parent = node.parentId ? wrapped.get(node.parentId) : undefined;
+    if (parent) parent.children.push(entry);
+    else roots.push(entry);
+  }
+
+  const sortRecursive = (list: { order: number; children: unknown[] }[]) => {
+    list.sort((a, b) => a.order - b.order);
+    for (const item of list) sortRecursive(item.children as typeof list);
+  };
+  sortRecursive(roots);
+  return roots;
+};
